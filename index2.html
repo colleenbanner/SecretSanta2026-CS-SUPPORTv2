@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secret Santa 2026</title>
+<style>
+:root{
+  --o100:#FDE8D8;--o300:#FE934C;--o500:#FF7214;--o700:#973C00;--o900:#522000;
+  --g100:#F4F4F4;--g200:#E5E5E5;--g300:#C5C5C5;--g500:#696969;--g700:#4A4A4A;--g900:#2A2A2A;
+  --gr100:#EFF2EC;--gr500:#5B7D3C;--gr700:#324421;
+  --pk100:#F5E9ED;--pk500:#D63A6B;--pk700:#7B1938;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;color:var(--g900);background:var(--g100);background-image:radial-gradient(var(--g200) 1.5px,transparent 1.6px);background-size:22px 22px;line-height:1.45}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 32px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.tabs button{border:1px solid var(--g300);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;color:var(--g700);cursor:pointer}
+.tabs button.on{background:var(--g900);border-color:var(--g900);color:#fff}
+.bar{border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
+.bar.good{background:var(--gr100);color:var(--gr700)}
+.bar.bad{background:var(--pk100);color:var(--pk700)}
+.card{background:#fff;border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.06);overflow:hidden}
+.ribbon{height:6px;background:repeating-linear-gradient(135deg,var(--gr500) 0 12px,#fff 12px 16px,var(--pk500) 16px 28px,#fff 28px 32px)}
+.hd{padding:18px 20px 14px;border-bottom:1px solid var(--g200)}
+.logo{height:22px;display:block;margin-bottom:12px}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.2px}
+h2{margin:0 0 4px;font-size:20px}
+.sub{color:var(--g500);font-size:14px;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pill{font-size:12px;border-radius:999px;padding:4px 10px;background:var(--o100);color:var(--o900)}
+.pill.due{background:var(--pk100);color:var(--pk700);font-weight:600}
+.bd{padding:18px 20px 22px}
+.q{margin-bottom:18px}
+.lbl{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.hint{font-weight:400;color:var(--g500);font-size:12px}
+.req{color:var(--o500);font-weight:700}
+input[type=text],input[type=password],textarea,select{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--g300);border-radius:10px;background:#fff;color:var(--g900)}
+textarea{resize:vertical;min-height:60px}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--o500);box-shadow:0 0 0 3px var(--o100)}
+input:disabled,select:disabled{background:var(--g100);color:var(--g500)}
+.other{margin-top:8px;font-size:15px!important;padding:8px 12px!important}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.off{opacity:.4;pointer-events:none}
+.chip{border:1.5px solid var(--g300);background:#fff;border-radius:999px;padding:6px 11px;font:inherit;font-size:14px;cursor:pointer;color:var(--g700);display:inline-flex;align-items:center;gap:6px}
+.chip .dot{width:11px;height:11px;border-radius:50%;background:var(--c,var(--g500))}
+.chip .dot.light{box-shadow:inset 0 0 0 1px var(--g300)}
+.chip.on{border-color:var(--cb,var(--c,var(--o500)));background:var(--ct,var(--o100));color:var(--g900);font-weight:600}
+.chip.on::after{content:"✓";font-weight:700}
+.chip[hidden]{display:none}
+.rank{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rk{border:1.5px solid var(--g300);background:#fff;border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:10px;color:var(--g700)}
+.rk .n{width:24px;height:24px;border-radius:50%;border:1.5px dashed var(--g300);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
+.rk.on{border-color:var(--o500);background:var(--o100);color:var(--g900);font-weight:600}
+.rk.on .n{background:var(--o500);border:0;color:#fff}
+.reset{background:none;border:0;color:var(--o700);font:inherit;font-size:12px;cursor:pointer;padding:6px 0 0;text-decoration:underline}
+.three{display:grid;gap:8px}
+.three label{display:flex;align-items:center;gap:8px}
+.n3{width:24px;height:24px;border-radius:50%;background:var(--o500);color:#fff;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.me{display:flex;align-items:center;gap:10px}
+.me .dot{width:14px;height:14px;border-radius:50%;background:var(--g300);flex:none}
+.editbox{background:var(--o100);border-radius:12px;padding:12px;margin-top:10px;font-size:14px}
+.editbox p{margin:0 0 8px}
+.sec{margin:26px 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--g500);font-weight:700;display:flex;align-items:center;gap:8px}
+.sec:after{content:"";flex:1;height:1px;background:var(--g200)}
+.secnote{font-size:12px;color:var(--g500);margin:-4px 0 12px}
+.q.miss{outline:2px solid var(--pk500);outline-offset:6px;border-radius:8px}
+.callout{background:var(--gr100);border-left:4px solid var(--gr500);border-radius:12px;padding:14px 14px 2px;margin-bottom:18px}
+.callout .t{font-weight:700;color:var(--gr700);margin:0 0 10px;font-size:14px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px 16px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;background:var(--o500);color:#fff}
+.btn:hover{background:var(--o700)}
+.btn:disabled{background:var(--g300);cursor:not-allowed}
+.btn.green{background:var(--gr500)}.btn.green:hover{background:var(--gr700)}
+.btn.pink{background:var(--pk500)}
+.btn.small{display:inline-block;width:auto;padding:10px 14px;font-size:14px}
+.btn.ghost{background:#fff;color:var(--g700);border:1px solid var(--g300)}
+.err{color:var(--pk700);font-size:13px;min-height:18px;margin:8px 0 0}
+.note{font-size:12px;color:var(--g500);margin:10px 0 0}
+.done{text-align:center;padding:26px 8px 8px}
+.big{font-size:44px;line-height:1;margin-bottom:8px}
+.view{display:none}.view.on{display:block}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.gift{border-radius:16px;padding:16px;margin-top:16px;border:1.5px solid var(--c);background:var(--ct)}
+.gift .k{font-size:13px;color:var(--cd);margin:0}
+.gift h2{margin:2px 0 6px;font-size:26px;color:var(--cd)}
+dl.kv{display:grid;grid-template-columns:104px 1fr;gap:6px 10px;font-size:14px;margin:10px 0 0}
+.kv dt{color:var(--g500)}.kv dd{margin:0;overflow-wrap:anywhere}
+.status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 16px}
+.st{border:1px solid var(--g200);border-radius:10px;padding:9px 11px;display:flex;align-items:center;gap:8px;font-size:14px}
+.st .dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.st .ok{margin-left:auto;font-size:12px;font-weight:700;color:var(--gr700);background:var(--gr100);border-radius:999px;padding:2px 8px}
+.st .wait{margin-left:auto;font-size:12px;color:var(--g500)}
+.st .lock{margin-left:auto;font-size:12px;color:var(--pk700)}
+.drawn{border-radius:14px;background:var(--gr100);border:1.5px solid var(--gr500);padding:14px;margin-top:14px}
+.drawn h3{margin:0 0 4px;color:var(--gr700)}
+details{border:1px solid var(--g200);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px}
+summary{cursor:pointer;font-weight:600}
+.toolrow{display:flex;gap:8px;margin-top:8px}.toolrow select{flex:1}
+.ft{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--g500);padding:12px 4px}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--g500);text-decoration:underline;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--g900);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tabs" id="tabs">
+    <button class="on" data-view="list">📝 My list</button>
+    <button data-view="reveal">🎁 Who I got</button>
+  </div>
+  <div class="bar good" id="drawnBar" hidden>🎉 Names have been drawn! Tap <b>Who I got</b> and enter your code to see your person.</div>
+  <div class="bar bad" id="netBar" hidden>Can't reach the North Pole right now. Check your connection and refresh.</div>
+  <div class="card">
+    <div class="ribbon"></div>
+    <div class="hd">
+      <img class="logo" src="data:image/png;base64,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" alt="Riverhawk Industrial Supply">
+      <h1>🎁 Secret Santa 2026</h1>
+      <p class="sub">Help your Santa nail it. The more you share, the better the gift.</p>
+      <div class="meta">
+        <span class="pill due">Lists due Wed 12/30, end of day</span>
+        <span class="pill">Swap: Fri 12/18 at our team lunch</span>
+        <span class="pill">Suggested spend: $40–$50</span>
+        <span class="pill"><b id="cnt">–</b> of <span id="tot">5</span> lists in</span>
+      </div>
+      <p class="note">Please do not exceed $50.</p>
+    </div>
+
+    <div class="bd view on" id="v-list">
+      <form id="listForm" novalidate></form>
+      <div class="done" id="listDone" hidden>
+        <div class="big">🎉</div>
+        <h2>You're on the nice list!</h2>
+        <p class="sub" id="doneMsg"></p>
+        <p style="margin-top:16px"><button class="btn small ghost" id="editAgain" type="button">Edit my list</button></p>
+      </div>
+    </div>
+
+    <div class="bd view" id="v-reveal">
+      <h2>Who did you get?</h2>
+      <p class="sub" style="margin-bottom:14px">Pick your name and enter your Santa code.</p>
+      <div class="row">
+        <select id="r-me" aria-label="Your name"><option value="">Your name…</option></select>
+        <input type="password" id="r-code" inputmode="numeric" maxlength="4" placeholder="Code" autocomplete="off" aria-label="Santa code">
+      </div>
+      <button class="btn green" id="r-go" type="button" style="margin-top:12px">Reveal 🎁</button>
+      <p class="err" id="r-err"></p>
+      <div id="r-out"></div>
+    </div>
+
+    <div class="bd view" id="v-org">
+      <p style="margin:0 0 10px"><button class="linkbtn" id="orgBack" type="button">← Back</button></p>
+      <h2>🛠️ Santa's Workshop</h2>
+      <div id="orgLogin">
+        <p class="sub" style="margin-bottom:12px">Organizer only. Enter the organizer passcode.</p>
+        <div class="row">
+          <input type="password" id="o-code" placeholder="Organizer passcode" autocomplete="off" aria-label="Organizer passcode">
+          <button class="btn small" id="o-go" type="button" style="flex:none">Open</button>
+        </div>
+        <p class="err" id="o-err"></p>
+      </div>
+      <div id="orgBody" hidden>
+        <p class="sub">Shows who's in and lets you read the lists. Never the pairings.</p>
+        <div class="status" id="o-status"></div>
+        <button class="btn" id="o-draw" type="button" disabled>Draw names</button>
+        <p class="note" id="o-hint"></p>
+        <div id="o-drawn"></div>
+        <div class="sec">Read the lists</div>
+        <div id="o-lists"></div>
+        <div class="sec">Forgot a code?</div>
+        <p class="note" style="margin-top:0">Clearing a code also unlocks the name. The next code that person enters becomes their new one.</p>
+        <div class="toolrow"><select id="o-resetName" aria-label="Whose code"></select><button class="btn small ghost" id="o-reset" type="button">Clear code</button></div>
+        <p style="margin-top:14px"><button class="btn small ghost" id="o-refresh" type="button">Refresh</button></p>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span>Riverhawk Industrial Supply · internal · v1.0 · <button class="linkbtn" id="orgLink" type="button">Organizer</button></span><span>More than just a supplier.</span></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SUPA_URL="https://yxejpzbsbwfovpumpjlw.supabase.co", SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4ZWpwemJzYndmb3ZwdW1wamx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0ODE2NjcsImV4cCI6MjA5MTA1NzY2N30.ZZnv5G_wMjHycx-1L4wvMmB7YXZA7c6DdBaoiGKb7to";
+const TEAM=[["Breanna","b"],["Colleen","o"],["Kaitlyn","p"],["Kendall","gr"],["Nicole","b"]];
+const NAMES=TEAM.map(t=>t[0]);
+const PAL={b:"#1E5BA8",p:"#6B3FA0",gr:"#5B7D3C",o:"#FF7214"},TINT={b:"#E9EEF6",p:"#EFEBF3",gr:"#EFF2EC",o:"#FDE8D8"},DARK={b:"#10325C",p:"#3A2258",gr:"#324421",o:"#973C00"};
+const pal=n=>(TEAM.find(t=>t[0]===n)||[n,"o"])[1];
+const COLORS=[["Red","#D32F2F"],["Orange","#FF7214"],["Yellow","#F2C200"],["Green","#2E7D32"],["Sage","#9CAF88"],["Teal","#00897B"],["Blue","#1E5BA8"],["Navy","#1A2A57"],["Purple","#6B3FA0"],["Pink","#E86A9A"],["Black","#2A2A2A"],["White","#FFFFFF"],["Gray","#9E9E9E"],["Gold","#C9A227"],["Silver","#C0C0C0"]];
+const SCENTS=["Vanilla","Citrus","Fruity & berry","Floral","Lavender","Fresh & clean","Cucumber & melon","Fall spice","Sweet & bakery","Woodsy","Beach & coconut","Mint"];
+const UNSCENTED="🚫 All of them (unscented only)";
+const FLAVORS=["🍫 Sweet","🥨 Salty","🍋 Sour","🧀 Savory"];
+const TOP_PH=["The thing you'd love most","Runner-up","One more idea"];
+const SECTIONS=[
+ {qs:[{id:"me",type:"select",label:"Who are you?",req:1,opts:NAMES}]},
+ {t:"Your favorites",qs:[
+  {id:"colors",type:"colors",label:"Favorite colors",hint:"pick all you love",other:"A specific shade?",req:1},
+  {id:"flavors",type:"rank",label:"Rank these flavors",hint:"tap in order, favorite first",opts:FLAVORS,req:1},
+  {id:"snacks",type:"text",label:"Snacks",ph:"e.g. popcorn, chips, trail mix"},
+  {id:"candy",type:"text",label:"Candy",ph:"e.g. chocolate, gummies, mints"},
+  {id:"drinks",type:"chips",label:"Drinks",hint:"pick all that apply",opts:["☕ Coffee","🍵 Tea","🥤 Soda","🥤 Diet or zero soda","⚡ Energy drinks","🍋 Lemonade & juice","💧 Sparkling water"],other:"Go-to brand or flavor?"}]},
+ {t:"Your interests",qs:[
+  {id:"pop",type:"area",label:"Pop culture",hint:"movies, TV, books",ph:"Shows you binge, movies you quote, books you love"},
+  {id:"sports",type:"text",label:"Sports",ph:"Teams you root for (or \"nope\")"},
+  {id:"animals",type:"text",label:"Favorite animals",ph:"e.g. cats, dolphins, penguins"}]},
+ {t:"Shopping & food",qs:[
+  {id:"shop",type:"chips",label:"Favorite places to shop",hint:"pick all that apply",req:1,other:"Anywhere else?",
+   opts:["Amazon","Target","Walmart","Publix","Ulta","Bath & Body Works","Barnes & Noble","Books-A-Million","Hobby Lobby","Lowe's","Home Depot","Harbor Freight","Dollar Tree","JCPenney","Steam"]},
+  {id:"food",type:"chips",label:"Favorite restaurants",hint:"pick all that apply",req:1,other:"Local favorites?",
+   opts:["Chick-fil-A","Starbucks","Dunkin'","Panera","Olive Garden","LongHorn","Outback","Texas Roadhouse","Sonny's BBQ","Chicken Salad Chick","Taco Bell","Subway","Chipotle","Chili's","Cracker Barrel"]}]},
+ {t:"Scents",note:"Answer at least one of these two.",qs:[
+  {id:"scentYes",type:"chips",label:"Scents you love",opts:SCENTS,other:"A favorite specific scent?"},
+  {id:"scentNo",type:"chips",label:"Scents you don't",opts:[UNSCENTED,...SCENTS],other:"Anything else to avoid?"}]},
+ {t:"Gift ideas",qs:[
+  {id:"daily",type:"chips",label:"Things you'd use every day",hint:"pick all that apply",req:1,other:"Anything else?",
+   opts:["Pens & markers","Notebooks & planners","Desk supplies","Fidgets & desk toys","Magnets","Mugs & tumblers","Water bottles","Tech accessories","Cozy socks","Hoodies & tees","Lip balm & hand care","Skincare & makeup","Plants","Bookish things","Puzzles & games","Crafts & coloring","Tools & gadgets"]},
+  {id:"nope",type:"chips",label:"Please don't get me…",other:"Anything else?",
+   opts:["Alcohol","Clothing","Candles","Bath & body","Home decor","Books","Coffee","Tea","Sweets","Gag gifts","Knick-knacks"]},
+  {id:"allergy",type:"chips",label:"Allergies",opts:["🙌 None"],other:"Foods, materials, anything to avoid"},
+  {id:"top",type:"three",label:"What do you love the most?",hint:"your top 3",req:1}]},
+ {t:"Draw rules",callout:1,qs:[
+  {id:"last",type:"select",label:"Who did you have last year?",opts:[...NAMES,"Someone not on the team now","I didn't play last year"]},
+  {id:"skip",type:"chips",label:"Skip drawing…",hint:"family you already shop for",opts:NAMES,team:1},
+  {id:"code",type:"code",label:"Pick a 4-digit Santa code",req:1}]}
+];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function chip(label,o={}){
+  const st=o.c?` style="--c:${o.c};--cb:${o.cb||o.c};--ct:${o.ct||"#fff"}"`:"";
+  return `<button type="button" class="chip" data-v="${esc(label)}"${st}>${o.c?`<span class="dot${o.light?" light":""}"></span>`:""}${esc(label)}</button>`;
+}
+const EDITBOX=`<div class="editbox" id="editbox" hidden><p><b>Your list is in ✓</b> Want to change something? Enter your Santa code to load it.</p>
+<div class="row"><input type="password" id="e-code" inputmode="numeric" maxlength="4" placeholder="Code" autocomplete="off" aria-label="Santa code"><button class="btn small" id="e-load" type="button" style="flex:none">Load my list</button></div><p class="err" id="e-err"></p></div>`;
+function qHTML(q){
+  let h=`<div class="q" id="blk-${q.id}"><span class="lbl">${esc(q.label)}${q.req?' <span class="req">*</span>':""}${q.hint?` <span class="hint">${esc(q.hint)}</span>`:""}</span>`;
+  const sel=`<select id="q-${q.id}"><option value="">Pick one…</option>${(q.opts||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join("")}</select>`;
+  if(q.type==="select") h+=q.id==="me"?`<div class="me"><span class="dot" id="medot"></span>${sel}</div>${EDITBOX}`:sel;
+  if(q.type==="colors") h+=`<div class="chips" data-q="${q.id}">${COLORS.map(([n,c])=>chip(n,{c,cb:n==="White"?"#696969":c,light:n==="White"})).join("")}</div>`;
+  if(q.type==="rank") h+=`<div class="rank" data-q="${q.id}">${q.opts.map(o=>`<button type="button" class="rk" data-v="${esc(o)}"><span class="n"></span>${esc(o)}</button>`).join("")}</div><button type="button" class="reset" data-reset="${q.id}">Start over</button>`;
+  if(q.type==="text") h+=`<input type="text" id="q-${q.id}" maxlength="300" placeholder="${esc(q.ph||"")}">`;
+  if(q.type==="area") h+=`<textarea id="q-${q.id}" maxlength="600" placeholder="${esc(q.ph||"")}"></textarea>`;
+  if(q.type==="chips") h+=`<div class="chips" data-q="${q.id}">${q.opts.map(o=>q.team?chip(o,{c:PAL[pal(o)],ct:TINT[pal(o)]}):chip(o)).join("")}</div>`;
+  if(q.type==="three") h+=`<div class="three">${[1,2,3].map(i=>`<label><span class="n3">${i}</span><input type="text" id="q-top${i}" maxlength="200" placeholder="${esc(TOP_PH[i-1])}"></label>`).join("")}</div>`;
+  if(q.type==="code") h+=`<input type="password" id="q-code" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off"><p class="note" style="margin-top:6px">You'll use it to see who you got. Don't share it, and pick one you'll remember.</p>`;
+  if(q.other) h+=`<input type="text" class="other" id="q-${q.id}-other" maxlength="300" placeholder="${esc(q.other)}">`;
+  return h+"</div>";
+}
+let html="";
+for(const s of SECTIONS){
+  if(s.t) html+=`<div class="sec">${esc(s.t)}</div>`;
+  if(s.note) html+=`<p class="secnote">${esc(s.note)}</p>`;
+  const inner=s.qs.map(qHTML).join("");
+  html+=s.callout?`<div class="callout" id="rules"><p class="t">🤫 Only the shuffle sees these. Not even Colleen.</p><p class="note" id="rulesNote" style="margin:-4px 0 10px" hidden>Names are drawn, so last year and skips are locked. You can still update your list.</p>${inner}</div>`:inner;
+}
+html+=`<button class="btn" type="submit" id="sendBtn">Send it to the North Pole 🎅</button><p class="err" id="listErr"></p>`;
+$("#listForm").innerHTML=html;
+
+// ---------- Supabase ----------
+async function rpc(fn,args){
+  const h={"Content-Type":"application/json","apikey":SUPA_KEY};
+  if(SUPA_KEY.startsWith("eyJ")) h.Authorization="Bearer "+SUPA_KEY;
+  let r; try{r=await fetch(SUPA_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:h,body:JSON.stringify(args||{})});}catch(e){throw new Error("network");}
+  const t=await r.text(); let j=null; try{j=t?JSON.parse(t):null;}catch(e){}
+  if(!r.ok) throw new Error((j&&(j.message||j.hint))||("HTTP "+r.status));
+  return j;
+}
+const ERR={name:"Pick your name first.",code_format:"Your Santa code needs to be 4 numbers.",
+ nomatch:"That code doesn't match the one picked for this name. Forgot it? Ask Colleen to clear it.",
+ locked:"Too many wrong codes for this name. Ask Colleen to clear it.",
+ drawn:"Names have already been drawn, so new lists can't be added. Talk to Colleen.",
+ answers:"Something's off with the form. Refresh and try again.",nolist:"There's no list for that name yet. Fill one out under My list first.",
+ admin:"That passcode doesn't match.",already:"Names were already drawn.",missing:"Not every list is in yet.",
+ impossible:"No draw fits the rules. Ask Claude to loosen one.",network:"Can't reach the North Pole. Check your connection and try again."};
+const msg=e=>ERR[e]||("Something went wrong ("+e+"). Try again.");
+let toastT; function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),3200);}
+
+// ---------- status ----------
+let STATUS=null,FIRST=true; const LOADED={};
+const isIn=n=>!!(STATUS&&(STATUS.people||[]).some(p=>p.name===n&&p.in));
+function updateEditbox(){const me=$("#q-me").value;$("#editbox").hidden=!(me&&isIn(me)&&!LOADED[me]);}
+function lockRules(){const d=!!(STATUS&&STATUS.drawn);$("#q-last").disabled=d;$('[data-q="skip"]').classList.toggle("off",d);$("#rulesNote").hidden=!d;}
+async function loadStatus(){
+  try{STATUS=await rpc("cs_ss_status");$("#netBar").hidden=true;}catch(e){$("#netBar").hidden=false;return;}
+  $("#cnt").textContent=STATUS.count;$("#tot").textContent=STATUS.total;
+  [...$("#q-me").options].forEach(o=>{if(o.value)o.textContent=o.value+(isIn(o.value)?"  ✓ list in":"");});
+  $("#drawnBar").hidden=!STATUS.drawn; lockRules(); updateEditbox();
+  if(FIRST&&STATUS.drawn&&!location.hash) selectTab("reveal"); FIRST=false;
+}
+
+// ---------- form behavior ----------
+const rank={flavors:[]};
+function paintRank(q){$$(`[data-q="${q}"] .rk`).forEach(b=>{const i=rank[q].indexOf(b.dataset.v);b.classList.toggle("on",i>-1);b.querySelector(".n").textContent=i>-1?i+1:"";});}
+const twin=(q,v)=>$$(`[data-q="${q}"] .chip`).find(x=>x.dataset.v===v);
+document.addEventListener("click",e=>{
+  const miss=e.target.closest(".q.miss"); if(miss) miss.classList.remove("miss");
+  const r=e.target.closest(".rk");
+  if(r){const q=r.parentElement.dataset.q,a=rank[q],i=a.indexOf(r.dataset.v);if(i>-1)a.splice(i,1);else a.push(r.dataset.v);paintRank(q);return;}
+  const rs=e.target.closest("[data-reset]"); if(rs){rank[rs.dataset.reset]=[];paintRank(rs.dataset.reset);return;}
+  const c=e.target.closest("#listForm .chip"); if(!c) return;
+  const q=c.parentElement.dataset.q,v=c.dataset.v; c.classList.toggle("on"); const on=c.classList.contains("on");
+  if(q==="scentYes"&&on){const t=twin("scentNo",v);t&&t.classList.remove("on");}
+  if(q==="scentNo"){
+    if(v===UNSCENTED){$('[data-q="scentYes"]').classList.toggle("off",on);if(on)$$('[data-q="scentYes"] .chip').forEach(x=>x.classList.remove("on"));}
+    else if(on){const t=twin("scentYes",v);t&&t.classList.remove("on");}
+  }
+  if(q==="allergy"&&on) $("#q-allergy-other").value="";
+});
+document.addEventListener("input",e=>{const m=e.target.closest(".q.miss");if(m)m.classList.remove("miss");
+  if(e.target.id==="q-allergy-other"&&e.target.value) $$('[data-q="allergy"] .chip').forEach(x=>x.classList.remove("on"));});
+$("#q-me").addEventListener("change",()=>{const me=$("#q-me").value;$("#medot").style.background=me?PAL[pal(me)]:"";
+  $$('[data-q="skip"] .chip').forEach(x=>{x.hidden=x.dataset.v===me;if(x.hidden)x.classList.remove("on");});
+  [...$("#q-last").options].forEach(o=>o.hidden=o.value===me); if($("#q-last").value===me)$("#q-last").value="";
+  $("#e-err").textContent="";$("#e-code").value="";updateEditbox();});
+
+const val=q=>($("#q-"+q).value||"").trim();
+const pick=q=>({picks:$$(`[data-q="${q}"] .chip.on`).map(c=>c.dataset.v),other:((($(`#q-${q}-other`)||{}).value)||"").trim()});
+function collect(){return{colors:pick("colors"),flavors:[...rank.flavors],snacks:val("snacks"),candy:val("candy"),drinks:pick("drinks"),
+  pop:val("pop"),sports:val("sports"),animals:val("animals"),shop:pick("shop"),food:pick("food"),scentYes:pick("scentYes"),
+  scentNo:pick("scentNo"),daily:pick("daily"),nope:pick("nope"),allergy:pick("allergy"),top:[1,2,3].map(i=>$("#q-top"+i).value.trim())};}
+function fill(a,last,skip){
+  ["colors","drinks","shop","food","scentYes","scentNo","daily","nope","allergy"].forEach(q=>{const o=a[q]||{};
+    $$(`[data-q="${q}"] .chip`).forEach(c=>c.classList.toggle("on",(o.picks||[]).includes(c.dataset.v)));
+    const oth=$(`#q-${q}-other`); if(oth) oth.value=o.other||"";});
+  $('[data-q="scentYes"]').classList.toggle("off",((a.scentNo||{}).picks||[]).includes(UNSCENTED));
+  rank.flavors=(a.flavors||[]).filter(v=>FLAVORS.includes(v));paintRank("flavors");
+  ["snacks","candy","pop","sports","animals"].forEach(q=>$("#q-"+q).value=a[q]||"");
+  [0,1,2].forEach(i=>$("#q-top"+(i+1)).value=((a.top||[])[i])||"");
+  $("#q-last").value=[...$("#q-last").options].some(o=>o.value===last)?last:"";
+  const me=$("#q-me").value; $$('[data-q="skip"] .chip').forEach(c=>c.classList.toggle("on",c.dataset.v!==me&&(skip||[]).includes(c.dataset.v)));
+}
+$("#e-load").onclick=async()=>{const me=$("#q-me").value,code=$("#e-code").value.trim();
+  if(!/^\d{4}$/.test(code)){$("#e-err").textContent=ERR.code_format;return;}
+  const b=$("#e-load");b.disabled=true;
+  try{const r=await rpc("cs_ss_my_list",{p_name:me,p_code:code});
+    if(!r.ok){$("#e-err").textContent=msg(r.error);return;}
+    fill(r.answers||{},r.last,r.skip||[]);$("#q-code").value=code;LOADED[me]=true;updateEditbox();toast("Your list is loaded. Make changes, then tap Send.");}
+  catch(e){$("#e-err").textContent=msg("network");}finally{b.disabled=false;}};
+
+const has=q=>$$(`[data-q="${q}"] .chip.on`).length>0||((($(`#q-${q}-other`)||{}).value)||"").trim()!=="";
+const CHECKS=[["me",()=>$("#q-me").value!==""],["colors",()=>has("colors")],["flavors",()=>rank.flavors.length===4],
+ ["shop",()=>has("shop")],["food",()=>has("food")],["scentYes",()=>has("scentYes")||has("scentNo"),["scentYes","scentNo"]],
+ ["daily",()=>has("daily")],["top",()=>[1,2,3].some(i=>$("#q-top"+i).value.trim())],["code",()=>/^\d{4}$/.test($("#q-code").value.trim())]];
+$("#listForm").addEventListener("submit",async e=>{e.preventDefault();$$(".q.miss").forEach(b=>b.classList.remove("miss"));
+  const miss=CHECKS.filter(c=>!c[1]());
+  miss.forEach(c=>(c[2]||[c[0]]).forEach(b=>$("#blk-"+b).classList.add("miss")));
+  if(miss.length){$("#listErr").textContent=`Almost! ${miss.length} required ${miss.length>1?"answers are":"answer is"} missing (outlined in pink).`;
+    $("#blk-"+miss[0][0]).scrollIntoView({behavior:"smooth",block:"center"});return;}
+  const me=$("#q-me").value,code=$("#q-code").value.trim(),btn=$("#sendBtn");
+  btn.disabled=true;btn.textContent="Sending to the North Pole…";$("#listErr").textContent="";
+  try{const r=await rpc("cs_ss_submit",{p_name:me,p_code:code,p_answers:collect(),p_last:$("#q-last").value||null,p_skip:pick("skip").picks});
+    if(!r.ok){$("#listErr").textContent=msg(r.error);return;}
+    LOADED[me]=true;
+    $("#doneMsg").innerHTML=`${r.updated?"Your changes are saved.":"Your list is in."} <b>${r.count} of ${r.total}</b> lists are in. Lists are due Wed 12/30 by end of day, then names get drawn. Come back to <b>Who I got</b> with your code to see your person.`;
+    $("#listForm").hidden=true;$("#listDone").hidden=false;window.scrollTo(0,0);loadStatus();}
+  catch(err){$("#listErr").textContent=msg("network");}
+  finally{btn.disabled=false;btn.textContent="Send it to the North Pole 🎅";}});
+$("#editAgain").onclick=()=>{$("#listDone").hidden=true;$("#listForm").hidden=false;window.scrollTo(0,0);};
+
+// ---------- lists as cards ----------
+const join=o=>[...((o&&o.picks)||[]),(o&&o.other)||""].filter(Boolean).join(", ");
+function listHTML(a){
+  const rows=[["Colors",join(a.colors)],["Flavors",(a.flavors||[]).map((f,i)=>`${i+1} ${f}`).join(" · ")],["Snacks",a.snacks],["Candy",a.candy],
+   ["Drinks",join(a.drinks)],["Pop culture",a.pop],["Sports",a.sports],["Animals",a.animals],["Shopping",join(a.shop)],["Restaurants",join(a.food)],
+   ["Scents they love",join(a.scentYes)],["Scents they don't",join(a.scentNo)],["Every day",join(a.daily)],["Please don't",join(a.nope)],
+   ["Allergies",join(a.allergy)],["Loves most",(a.top||[]).filter(Boolean).map((t,i)=>`${i+1}. ${t}`).join("   ")]];
+  return `<dl class="kv">${rows.filter(r=>r[1]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+}
+
+// ---------- tabs + reveal ----------
+function selectTab(v){$$("#tabs button").forEach(x=>x.classList.toggle("on",x.dataset.view===v));$$(".view").forEach(el=>el.classList.toggle("on",el.id==="v-"+v));}
+$$("#tabs button").forEach(b=>b.onclick=()=>selectTab(b.dataset.view));
+NAMES.forEach(n=>$("#r-me").add(new Option(n,n)));
+$("#r-go").onclick=async()=>{const me=$("#r-me").value,code=$("#r-code").value.trim();$("#r-out").innerHTML="";
+  if(!me||!/^\d{4}$/.test(code)){$("#r-err").textContent="Pick your name and enter your 4-digit code.";return;}
+  const b=$("#r-go");b.disabled=true;
+  try{const r=await rpc("cs_ss_reveal",{p_name:me,p_code:code});
+    if(!r.ok){$("#r-err").textContent=msg(r.error);return;}
+    $("#r-err").textContent="";
+    if(!r.drawn){$("#r-out").innerHTML=`<div class="bar good" style="margin-top:14px">Your code works ✓ Names haven't been drawn yet. Lists are due Wed 12/30, so check back after that.</div>`;return;}
+    const p=PAL[r.palette]?r.palette:pal(r.giftee);
+    $("#r-out").innerHTML=`<div class="gift" style="--c:${PAL[p]};--ct:${TINT[p]};--cd:${DARK[p]}"><p class="k">You're Secret Santa for…</p><h2>${esc(r.giftee)}!</h2>${listHTML(r.answers||{})}<p class="note">🤫 Only you can see this. Come back anytime to re-check the list. The swap is Fri 12/18 at our team lunch; suggested spend is $40–$50 (please do not exceed $50).</p></div>`;}
+  catch(e){$("#r-err").textContent=msg("network");}finally{b.disabled=false;}};
+$("#r-code").addEventListener("keydown",e=>{if(e.key==="Enter")$("#r-go").click();});
+
+// ---------- organizer ----------
+let ADMIN=null,armed=false;
+function showOrg(){$$(".view").forEach(v=>v.classList.toggle("on",v.id==="v-org"));$("#tabs").hidden=true;window.scrollTo(0,0);}
+function hideOrg(){$("#tabs").hidden=false;selectTab("list");if(location.hash)history.replaceState(null,"",location.pathname);}
+$("#orgLink").onclick=showOrg;$("#orgBack").onclick=hideOrg;
+const fmt=t=>t?new Date(t).toLocaleString("en-US",{weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+function renderOrg(r){
+  $("#orgLogin").hidden=true;$("#orgBody").hidden=false;
+  const ppl=r.people||[],all=r.count>=r.total,drawn=!!r.drawn_at;
+  $("#o-status").innerHTML=ppl.map(p=>`<div class="st" style="--c:${PAL[p.palette]||PAL.o}"><span class="dot"></span>${esc(p.name)}${p.locked?'<span class="lock">🔒 locked</span>':p.in?'<span class="ok">✓ in</span>':'<span class="wait">waiting</span>'}</div>`).join("");
+  armed=false;const d=$("#o-draw");d.className="btn";d.textContent="Draw names";d.disabled=!all||drawn;d.hidden=drawn;
+  $("#o-hint").textContent=drawn?"":all?"All lists are in. Ready when you are.":`${r.count} of ${r.total} lists are in. The draw unlocks when everyone's in.`;
+  $("#o-drawn").innerHTML=drawn?`<div class="drawn"><h3>✓ Names drawn ${esc(fmt(r.drawn_at))}</h3><p style="margin:0;font-size:14px">Rules honored: no self-picks, no family, no repeats from last year. The pairings are locked. You'll see only your own under <b>Who I got</b>, same as everyone else.</p></div>`:"";
+  $("#o-lists").innerHTML=ppl.filter(p=>p.in).map(p=>`<details><summary>${esc(p.name)} <span class="hint">updated ${esc(fmt(p.updated_at))}</span></summary>${listHTML(p.answers||{})}</details>`).join("")||'<p class="note">No lists yet.</p>';
+  $("#o-resetName").innerHTML=ppl.filter(p=>p.in).map(p=>`<option value="${esc(p.name)}">${esc(p.name)}${p.locked?" (locked)":""}</option>`).join("");
+  $("#o-reset").disabled=!ppl.some(p=>p.in);
+}
+async function refreshOrg(){if(!ADMIN)return;try{const r=await rpc("cs_ss_admin",{p_admin:ADMIN});if(r.ok)renderOrg(r);}catch(e){toast(msg("network"));}loadStatus();}
+$("#o-go").onclick=async()=>{const c=$("#o-code").value.trim();if(!c)return;const b=$("#o-go");b.disabled=true;
+  try{const r=await rpc("cs_ss_admin",{p_admin:c});if(!r.ok){$("#o-err").textContent=msg(r.error);return;}
+    ADMIN=c;$("#o-code").value="";$("#o-err").textContent="";renderOrg(r);}
+  catch(e){$("#o-err").textContent=msg("network");}finally{b.disabled=false;}};
+$("#o-code").addEventListener("keydown",e=>{if(e.key==="Enter")$("#o-go").click();});
+$("#o-draw").onclick=async()=>{const d=$("#o-draw");
+  if(!armed){armed=true;d.className="btn pink";d.textContent="Tap again to draw for real";$("#o-hint").textContent="This can't be undone from here.";return;}
+  d.disabled=true;d.textContent="Drawing…";
+  try{const r=await rpc("cs_ss_draw",{p_admin:ADMIN});toast(r.ok?"Names drawn! 🎉":msg(r.error));await refreshOrg();}
+  catch(e){toast(msg("network"));armed=false;d.className="btn";d.textContent="Draw names";d.disabled=false;}};
+$("#o-refresh").onclick=refreshOrg;
+$("#o-reset").onclick=async()=>{const n=$("#o-resetName").value;if(!n)return;
+  try{const r=await rpc("cs_ss_admin_reset",{p_admin:ADMIN,p_name:n});toast(r.ok?`${n}'s code is cleared. The next code ${n} enters becomes the new one.`:msg(r.error));refreshOrg();}
+  catch(e){toast(msg("network"));}};
+
+if(location.hash==="#organizer") showOrg();
+loadStatus();
+</script>
+</body>
+</html>
